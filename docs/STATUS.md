@@ -7,10 +7,10 @@ Last updated: 2026-08-28
 - Phase: public-repository placeholder publication and pre-implementation architecture definition.
 - Public repository: created at `https://github.com/junwei529/work-charter-dsh` with Public visibility and default branch `main`.
 - Local repository: initialized on `main` with `origin` set to `https://github.com/junwei529/work-charter-dsh.git`.
-- Public content acceptance: pending the initial commit, push, and independent remote verification.
+- Public content acceptance: `ACCEPTED` for the truthful placeholder; remote `main` contains initial content commit `078708fcb76141eb275ee89d64855932e35bc105`, and the GitHub connector independently fetched the public README with the exact approved maturity label.
 - Package/source scaffold: not created.
 - Implementation, automated tests, runtime installation, evaluation, tag, Release, and upstream contribution: not started.
-- Current writer: public transaction `WC-DSH-PUBLICATION-2026-08-28-01`, authorized by repository owner `junwei529`; handoff target is `none` after verified push and evidence recording.
+- Current writer after publication transaction `WC-DSH-PUBLICATION-2026-08-28-01`: none.
 
 ## Confirmed decisions
 
@@ -43,11 +43,10 @@ Last updated: 2026-08-28
 
 ## Next safe action
 
-1. Complete the bounded publication transaction: review, initial commit, push, public-page verification, and evidence recording.
-2. Relinquish the publication writer after the accepted public state is recorded.
-3. In a separately authorized task, bind the stable Work Charter source without modifying it and produce a read-only semantic mapping.
-4. Wait for a versioned scdp Service Definition before starting cross-plugin implementation.
-5. Stop for separate authorization before dependency installation, implementation writes, later commits or pushes, pull requests, tags, Releases, package publication, evaluation, or upstream modification.
+1. Retain the public repository and its commits as the truthful placeholder; if public truth later drifts, use an additive correction rather than deleting or rewriting accepted history unless separately authorized.
+2. In a separately authorized task, bind the stable Work Charter source without modifying it and produce a read-only semantic mapping.
+3. Wait for a versioned scdp Service Definition before starting cross-plugin implementation.
+4. Stop for separate authorization before dependency installation, implementation writes, later commits or pushes, pull requests, tags, Releases, package publication, evaluation, or upstream modification.
 
 ## Recovery read order
 

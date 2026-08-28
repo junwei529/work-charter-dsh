@@ -9,6 +9,16 @@ This file owns verification methods, evidence identities, controlled evaluation 
 | 2026-08-18 | Historical DSH source-audit summary | `UNKNOWN`: exact DSH ref, source boundary, and commands were not retained in this repository | Do not use as reproducible product or compatibility evidence |
 | 2026-08-18 | Historical repository-split analysis summary | `UNKNOWN`: exact scdp/DSH identities and source boundary were not retained in this repository | Architecture context only; not reproducible runtime evidence |
 | 2026-08-28 | Initial public-placeholder source inventory | PASS: the five intended Markdown files exist and their local navigation targets resolve | Static repository inventory only; no package, runtime, compatibility, or efficacy behavior was exercised |
+| 2026-08-28 | Public placeholder publication `WC-DSH-PUBLICATION-2026-08-28-01` | PASS: GitHub owner/repository, Public visibility, default `main`, initial commit, and public README maturity text were independently retrieved | Publication/status evidence only; no package, runtime, compatibility, release, installability, or efficacy behavior was exercised |
+
+## Public placeholder evidence
+
+- Public URL: `https://github.com/junwei529/work-charter-dsh`.
+- GitHub owner: `junwei529` (account id `118504844`); repository id `1349673753`.
+- Visibility/default branch: Public / `main`.
+- Initial content commit: `078708fcb76141eb275ee89d64855932e35bc105` (`docs: publish planned placeholder`).
+- Connector fetch: `README.md` from public `main`, blob `68b64bc837965b88f63438f4cbbf45e32256838f`, contained the exact label `Planned — not yet developed` and explicit no-implementation/no-installability/no-Release boundaries.
+- Publication exclusions observed: no implementation source, package metadata, install instructions, license file, tag, or Release was created.
 
 The source audit supports these bounded findings:
 
