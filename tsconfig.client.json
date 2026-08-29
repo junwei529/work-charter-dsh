@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src/client",
+    "outDir": "lib/types/client",
+    "tsBuildInfoFile": "lib/.client.tsbuildinfo",
+    "types": []
+  },
+  "include": ["src/client/**/*.ts", "src/client/**/*.tsx"]
+}

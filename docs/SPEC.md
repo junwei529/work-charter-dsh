@@ -1,120 +1,147 @@
 # work-charter-dsh specification
 
-Status: initial working contract. The exact upstream Work Charter baseline, package scope, DSH compatibility range, and scdp dependency range remain unbound.
+Status: implementation contract for the DSH alpha.1 locally runtime-qualified candidate. Public-registry installation, semantic efficacy, and release acceptance remain open.
+
+## Bound identities and compatibility
+
+- `WC-UPSTREAM`: installed Codex Skill `junwei529/work-charter` version `0.3.0`, package SHA-256 `7b67ea1f7073fa66ac91c36f3e39c735b54c04174e2fa3672068f8fa8948a5b2`, normalized package tree `0ac3cbb0f1fa8fa51d8f832c8127eabc9863ec9e`.
+- DSH source target: official tag `dsh-v0.1.2-alpha.1`, commit `cd5ef8148158c3a752a658978873241fdf8e2bbc`, Node `^22.19.0 || >=24.0.0`.
+- Coordination dependency: private source candidate `session-coordinator-dsh` `0.1.1-alpha.1`, public contract version `3`, logical storage schema `2`, adapted to that exact DSH alpha.1 source line.
+- Package contract: external package id `work-charter-dsh`; its current candidate version and MIT SPDX metadata are owned by `package.json`, with the full grant in the root `LICENSE`.
+
+Compatibility is exact and artifact-bound, not a range claim. Static/source checks establish that the candidate follows the pinned public contracts. A task-local graph made only from packed candidates and artifacts produced from the exact clean DSH tag establishes bounded clean-consumer and runtime behavior for that graph. The exact alpha.1 DSH packages and the scdp candidate are not published to npm, so ordinary registry-backed installation, formal release reproducibility, and every other DSH version remain `BLOCKED`/`UNKNOWN` rather than inheriting the local result.
 
 ## Outcome
 
-Provide a DSH-native policy layer that makes consequential multi-Session work explicit and recoverable through Work Charter concepts: outcome, scope, authority, writer, evidence, acceptance, stop/decision conditions, and recovery.
+Provide a DSH-native policy layer that makes consequential work explicit and recoverable through Work Charter concepts: outcome, scope, authority, current writer, evidence, acceptance, stop/decision conditions, and recovery. Supply missing multi-Session continuity through the public scdp contract instead of reimplementing it.
 
 ## Product boundary
 
 `work-charter-dsh` owns:
 
-- Charter records and their lifecycle;
-- outcome/scope and authority declarations;
-- writer/role policy and transition checks;
-- evidence requirements, acceptance state, unresolved decisions, stop state, and recovery guidance;
-- model-visible Charter context and its DSH-log representation;
-- Work Charter UI and policy-specific projections.
+- Charter records, schema, lifecycle, and compare-and-set revisions;
+- outcome/scope and four-layer contract declarations;
+- authority, role, one-writer, evidence, decision, stop/resume, and acceptance policy;
+- the policy meaning of checkpoint-bound Result Notices and dispositions;
+- model-visible Charter context, DSH Skill/tool surfaces, and UI projections.
 
 It consumes but does not own:
 
-- `WorkstreamId`, Session membership, coordination addressing, correlation, transport state, and generic failure recovery, which belong to `session-coordinator-dsh`;
-- DSH Session persistence, agent loop, tools, approvals, sandbox, subagents, workflow, goal, plan, and Trajectory;
+- scdp `WorkstreamId`, Session membership, addressing, correlation, immutable coordination records, delivery state, and delivery reconciliation;
+- DSH Session persistence, dynamic runtime-context logging, tools, skills, approvals, sandbox, goals, plans, workflows, subagents, agent loop, and Trajectory;
 - Git/worktree operations, native review, installation, release, or external authorization supplied by the surrounding Harness/project workflow.
 
-## Identity separation
+A Charter never expands any of those permissions. The Host is authoritative; model instructions and browser components are policy consumers and affordances.
 
-Evaluation must bind and keep separate:
+## Identity and assessment separation
 
-1. `WC-GOVERNANCE`: the stable external Work Charter process, if used to govern development;
-2. `WC-UPSTREAM`: the exact stable Work Charter source/version/hash used as the product baseline;
-3. `WC-DSH-CANDIDATE`: the exact candidate plugin source/build/install identity;
-4. an independent assessor when acceptance requires semantic judgment.
+Development and evaluation keep four identities separate:
 
-The candidate cannot govern, approve, accept, or evaluate itself. Governance instructions must not enter baseline/candidate model context; such leakage invalidates causal product conclusions.
+1. `WC-GOVERNANCE`: any external Work Charter used to govern development;
+2. `WC-UPSTREAM`: the immutable Codex Skill baseline above;
+3. `WC-DSH-CANDIDATE`: the exact candidate source/build/install identity under test;
+4. an independent assessor whenever acceptance requires semantic judgment.
 
-## Required v1 capabilities
+The candidate cannot govern, approve, accept, or assess itself. External governance instructions must not enter baseline or candidate model context; leakage invalidates causal efficacy conclusions.
 
-1. Create and attach a Charter to a scdp Workstream or an individual DSH Session.
-2. Record outcome, bounded scope, authority, current writer/role, evidence requirements, acceptance owner/state, stop conditions, unresolved decisions, and recovery entry.
-3. Apply deterministic Host-side validation to policy state transitions and reject stale or unauthorized updates explicitly.
-4. Provide a typed service and JSON-compatible Remote DTOs without importing scdp implementation internals.
-5. Project the current Charter into the relevant Session UI and global Workstream UI with plugin-owned keys.
-6. Assemble model-visible Charter instructions through a DSH-supported logged path so the request can be reconstructed from Session history.
-7. Preserve `UNKNOWN` when identity, authority, delivery, evidence, or current state cannot be proved.
-8. Support recovery by reloading the authoritative Charter and coordination state rather than relying on chat history.
+## Semantic adaptation
 
-## DSH integration design
+### Activation and protection
 
-### Host
+Skill discovery, loading, or mention is not Charter activation. For an indirect match, the Skill proposes applicability and the smallest status read, then waits for confirmation without creating policy or prescribing Charter workflow. Direct user intent or confirmation permits the workflow to begin but grants no implementation or external-effect authority. A Charter starts as `draft`; Host activation requires an externally referenced `approved` authority, an eligible assigned writer, a current Charter revision, and a current authority revision. The least sufficient protection is selected from:
 
-- Depend on the scdp Service Definition through Cordis injection; the compatible version range will be pinned after scdp's first public contract exists.
-- Store authoritative Charter state in a plugin-owned domain and connect it to Workstreams through `WorkstreamId`.
-- Enforce state transitions at Host request/command entry points.
-- Use DSH system-prompt/skill/injection seams only when the resulting model-visible input is logged and replayable.
-- Use plugin-owned event/projection namespaces such as `work-charter/*` and `workCharter` only after the external event compatibility path is proven.
+- `current-task` or `durable-single-agent`: exactly one Controller; a Session target must name that Session;
+- `planner-executor`: a Workstream target with distinct Planner and Executor, plus an optional Assessor independent of the Executor;
+- `standard-ope`: a Workstream target with distinct Orchestrator, Planner, and Executor, plus an optional Assessor independent of the Executor.
 
-### Client
+### Contract layers
 
-- Use fresh ids such as `work-charter-dsh` for all contributions.
-- Prefer additive `conversation.session.header.actions`, `conversation.input.dock`, or a scdp-provided extension point.
-- Do not occupy or shadow DSH `goal`, `plan`, `workflow-run`, approval/question composer, subagent lineage, or Trajectory owners.
-- A browser input block may explain a stop state but is never the authoritative enforcement mechanism.
+The durable contract keeps these separate:
 
-## Implementation language and runtime alignment
+1. Confirmed Contract — externally confirmed outcome, acceptance, scope, exclusions, and required effects;
+2. Necessary Guardrails — permissions, safety, reversibility, trust, compatibility, and authoritative project rules;
+3. Working Proposal — replaceable files, functions, algorithms, commands, and sequence;
+4. Assumptions / Open Decisions — uncertainty that cannot silently become fact.
 
-The DSH Loader can execute plain JavaScript ESM, so TypeScript is not a universal Loader requirement. For `work-charter-dsh`, TypeScript is a project requirement because the plugin implements a typed policy state machine, consumes the scdp Service Definition, exports durable/Remote DTOs and declarations, and contributes browser UI.
+### Lifecycle and fail-closed rules
 
-### Must align with the pinned DSH release
+The normal lifecycle is `draft -> active -> paused -> active -> closed`. An active Charter always retains one eligible writer. Ordinary writer release or handoff requires `draft` or `paused`; accepted close clears the active writer atomically with the terminal transition. A paused Charter may persist revoked or unknown authority so the loss of authority is durable, while `resume` remains fail-closed until externally referenced approved authority is restored. `closed` is terminal for transitions, Result Notices, and dispositions. Before every Workstream-target transition, the Host reopens the Workstream and revalidates the acting Session's current scdp membership; membership lookup failure fails closed, while activation and resume additionally revalidate every assigned role. New Result Notice and disposition transport likewise revalidates both Workstream endpoints before any transport or Charter write. Host operations reject stale Charter or authority revisions, ineligible/ambiguous writers, unauthorized or detached roles, revoked or unknown authority for active work, open material decisions, invalid evidence replacement, and invalid terminal acceptance.
 
-- TypeScript production sources compile to JavaScript; the Host entry is Node ESM under a package with `"type": "module"`.
-- The Node engine range is `UNKNOWN` and must be bound only after an exact supported DSH release and its package/runtime contract are evidenced.
-- Host exports include built JavaScript and declaration files, provisionally `lib/index.js` and `lib/types/index.d.ts`.
-- The browser half is exported as `./client`, declared in `dsh.client`, and built as DSH's lazy-CJS closure-factory artifact. This artifact is a Loader format inside an ESM package, not a public CommonJS API.
-- scdp, required DSH Service Definitions, `@deepseek-ai/cordis`, and the shared UI runtime such as React are peer dependencies and development dependencies so one profile supplies one service/runtime identity.
-- Host/Client wire values are JSON-compatible, and the browser half does not value-import scdp or another plugin's implementation; cross-plugin collaboration uses Cordis services and type-only imports.
-- Durable, wire, model/tool, and user-controlled inputs receive runtime validation; same-process typed internals rely on TypeScript.
+One-shot evidence is consumed when recorded, including a failed or unknown result, and its entire consumed record cannot be replayed, altered, or removed by contract revision; pending evidence cannot carry consumption metadata. Accepted close is valid only from `active` and requires approved authority, an independent eligible acceptance actor, one current eligible writer that the terminal transition releases atomically, no open decisions, all required evidence passed, and no Result Notice awaiting a disposition. Missing or conflicting identity, storage, coordination, delivery, or recovery proof remains `UNKNOWN`.
 
-### Project defaults
+### Cross-Session result flow
 
-- Use `.ts` for Host code, React `.tsx` for Client UI, `strict`, `noImplicitAny`, declaration output, ES2024-compatible output, and explicit Host/Client build faces.
-- Pin a reproducible pnpm/toolchain version after the packaging spike; matching DSH's current pnpm/tsdown versions is preferred initially but is not a public runtime guarantee.
-- Reproduce and test the lazy-CJS Client output locally because DSH's internal `clientBundle` tsdown preset is not currently published for external reuse.
-- tsdown is preferred for the first spike but is not mandatory; another bundler is acceptable only if byte-level/module-loading checks prove the same factory protocol and purity rules.
+The current writer may submit one checkpoint-bound Result Notice to an eligible Planner, Assessor, Controller, or Orchestrator only while no material decision remains open. A route permits only one notice for a given checkpoint and cannot advance to a distinct checkpoint while its latest notice still awaits disposition. A corrected result uses a new checkpoint while preserving the prior outcome; accepted close requires the latest notice on every used route to have an `accepted` disposition. For `standard-ope`, the assigned Planner may additionally submit the phase-level Result Notice to the assigned Orchestrator only when the latest Executor Result Notice has received an `accepted` disposition from its exact Planner or Assessor recipient. The Host causally binds that phase notice to the accepted execution disposition, asks scdp to accept the immutable addressed coordination record, and records the exact correlation, record identity, and observed delivery state. The exact recipient may return one causally linked disposition: `accepted`, `correction-required`, or `decision-required`.
 
-### Not required
+An unknown scdp accept is reopened using the same record identity. A matching immutable record may be recovered; a conflicting record fails explicitly, and a read failure preserves delivery as `UNKNOWN`. The plugin never blindly substitutes a new notice identity.
 
-- The repository need not copy DSH's full monorepo layout, every gate, or every internal project reference.
-- Python is not a v1 plugin implementation language. A future isolated Python process would require an explicit process/wire contract and is outside this specification.
-- Plain JavaScript may be used for a disposable loader probe, but it cannot become the released policy implementation without an authorized contract change.
+## DSH surfaces
 
-## Packaging and dependency direction
+### Host service and storage
 
-- One independently versioned external bundle contains both Host and Client halves.
-- Prefer publishing prebuilt npm or tarball artifacts. A Git-source installation requires a self-contained `prepare` build and explicit pnpm `allowBuilds` permission, so it is a development path rather than the default release experience.
-- The eventual npm package name and scope are `UNKNOWN`; a likely convention is `@your-scope/dsh-work-charter`.
-- Declare a compatible scdp version as a peer dependency once its public contract stabilizes.
-- Cross-plugin integration tests and compatibility pins belong to this consuming project.
-- Dependency direction remains `work-charter-dsh -> session-coordinator-dsh -> DSH`.
+The Cordis service key and Typert Remote namespace are `workCharter`. The public same-process Host service supports health, create/get/list, Session list, transition, Result Notice submission, and disposition return. The browser Remote is intentionally read-only: it exposes health, get/list, and Session-list operations with JSON-compatible runtime validation, but no create, transition, Result Notice, or disposition mutation. DSH alpha.1 does not supply a trusted caller identity on that direct Remote boundary, so a client-provided Session id is never treated as mutation authority. Model tools derive their actor from the executing DSH Agent Session; other Host callers remain inside the same-process trust boundary and must supply the exact actor identity.
+
+Authoritative state uses storage domain `work_charter_dsh`, table `charters`, physical schema `1`, logical schema `1`. Reopen validates domain metadata, row identifiers, and every durable invariant; incompatible state fails as `SCHEMA_INCOMPATIBLE` rather than being silently migrated.
+
+### Skill, tools, and logged model context
+
+The bundle registers the DSH Skill `work-charter` and these model tools:
+
+- `work_charter_status`;
+- `work_charter_create_draft`;
+- `work_charter_transition`;
+- `work_charter_result_notice`;
+- `work_charter_disposition`.
+
+The draft tool cannot approve or activate authority. Active/paused Charter context is bounded and assembled through DSH dynamic runtime context. The snapshot includes identities, revisions, authority, roles/writer, the four contract layers, evidence, open decisions, awaiting notices, pause state, and the no-permission disclaimer. The exact local runtime fixture proves that DSH persists active and paused snapshots plus the inactive clear marker in the Session log, and that a restarted Agent recovers that history without a redundant snapshot. If scdp state cannot be read, the snapshot and status tool say coordination is `UNKNOWN` rather than clearing policy context or claiming that no Charter exists.
+
+### Browser Client
+
+The lazy-CJS browser half contributes one fresh id, `work-charter-dsh`, to additive seats:
+
+- `sidebar.footer.action` for the global entry;
+- `conversation.session.header.actions` for a per-Session badge;
+- `shell.overlay` for read-only list/detail inspection.
+
+The Client does not occupy or shadow goal, plan, workflow, approval/question composer, subagent lineage, Conversation root, or Trajectory owners. UI state is not authoritative and cannot grant permissions. All Charter mutations use Host-side surfaces with an established actor identity; the Client never submits an actor Session id.
+
+For the alpha.1 split Client architecture, the bundle consumes only the public ownership faces needed by those seats: `@deepseek-ai/cordis` for `Context`, `@deepseek-ai/dsh-api-remotes/client` for the Remote projection, `@deepseek-ai/dsh-client-ui-renderer/client` for `SlotRegistry`, `@deepseek-ai/dsh-client-ui-session/client` for Session-scoped standard props, and the Conversation/Layout/Sidebar Client declarations for their respective SlotMap entries. It does not recreate an aggregate Client runtime.
+
+## Packaging and runtime alignment
+
+- Strict TypeScript/TSX production sources target ES2024; the Host emits Node ESM.
+- `./client` is DSH's lazy-CJS closure-factory artifact inside an ESM package, not a general CommonJS surface.
+- the private scdp candidate, Cordis, consumed DSH Service Definitions, and React are exact peer plus development dependencies so the containing profile supplies one runtime identity;
+- Zod validates durable, wire, model/tool, and user-controlled inputs.
+- the browser artifact bundles Zod, so the package includes its exact installed-version MIT notice in `THIRD_PARTY_NOTICES.md`; peer dependencies are not represented as bundled payload.
+- The bundle consumes only scdp's public package/Service Definition and does not import or modify implementation internals.
+- Type generation uses DSH Typert; generated Remote object codecs are hardened to strict objects.
 
 ## Non-goals for v1
 
-- Reimplementing scdp transport, Workstream identity, or generic coordination ledger.
-- Replacing DSH goal, plan, workflow, approval, subagent, Session, sandbox, or agent-loop capabilities.
-- Claiming full parity with every Codex-specific Work Charter workflow before an explicit semantic mapping and controlled evaluation.
+- Reimplementing scdp transport, Workstream identity, membership, or its coordination ledger.
+- Replacing DSH goal, plan, workflow, approval, subagent, Session, sandbox, agent loop, or Trajectory capabilities.
+- Claiming compatibility with unqualified DSH versions or broad parity with every Harness.
 - Candidate self-governance, self-acceptance, or self-assessment.
-- Treating documentation completeness, static checks, or model self-report as efficacy evidence.
+- Treating documentation, typechecks, unit tests, or model self-report as runtime or semantic-efficacy evidence.
 
 ## Acceptance contract
 
 v1 is acceptable only when evidence shows that:
 
-- the external bundle loads with exact pinned DSH and scdp versions;
-- a Charter can be created, attached, persisted, reloaded, and recovered for a Workstream and Session;
+- the external bundle installs and loads with the exact pinned DSH and scdp identities;
+- Host ESM, declarations, Remote artifacts, and lazy-CJS Client format resolve from a clean consumer;
+- a Charter can be created, attached, persisted, restarted, reopened, and recovered for a Workstream and Session;
 - stale/unauthorized transitions fail closed at the Host while authorized transitions remain usable;
-- model-visible Charter context is reconstructable from the DSH Session log;
+- scdp Result Notice/disposition delivery, unknown-state recovery, and conflict handling work through the public service;
+- model-visible Charter context is reconstructable from the DSH Session log and absent when not active;
 - Work Charter UI coexists with native goal, plan, workflow, approval, Conversation, and Trajectory UI;
 - deterministic unit, integration, restart, keyless snapshot, and browser checks pass;
-- baseline/candidate identities and governance isolation are recorded;
+- identities and governance isolation are recorded; and
 - any semantic efficacy claim comes from a controlled comparison and independent assessment, not candidate self-report.
+
+## Current acceptance disposition
+
+The exact final local-artifact graph satisfies the package/type, clean-consumer, Loader, Host enforcement, JSON restart/reopen, base scdp coordination, logged-context, bounded Chromium, and Standard O/P/E L4 acceptance layers recorded in `docs/VERIFICATION.md`. The dedicated L4 run uses three distinct real DSH role AgentLoops and the Work Charter/scdp path for all six messages. The Host rejects a premature Planner phase report, permits it only after an accepted Executor result, causally links P→O to the execution disposition and O→P to the phase notice, and emits distinct phase-level message schemas. All six deliveries reach durable `acknowledged` state and are consumed by their target role models.
+
+Overall v1 acceptance also remains open because no controlled upstream-baseline/candidate comparison or independent semantic assessment has run. The current browser evidence proves additive seat ownership and Work Charter behavior in real Chromium; native goal/plan/workflow/approval/Conversation/Trajectory entries are ownership sentinels in the qualification fixture, not full semantic end-to-end tests of those native features.
