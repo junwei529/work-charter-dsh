@@ -1,6 +1,6 @@
 # work-charter-dsh specification
 
-Status: implementation contract for the DSH alpha.1 locally runtime- and release-qualified GitHub Pre-release candidate. Public-registry installation, public WCDP publication, semantic efficacy, and overall v1 acceptance remain open.
+Status: implementation contract for the DSH alpha.1 runtime- and release-qualified WCDP published as GitHub Pre-release `v0.1.0-alpha.1`. Public-registry installation, semantic efficacy, and overall v1 acceptance remain open.
 
 ## Bound identities and compatibility
 

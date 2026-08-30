@@ -1,52 +1,217 @@
-# work-charter-dsh
+# Work Charter for DeepSeek Harness
 
-Status: **DSH alpha.1 locally release-qualified base runtime and L4 Standard O/P/E candidate — private, not yet published, and not independently semantically accepted**
+[简体中文](README.zh-CN.md)
 
-`work-charter-dsh` adapts the current local Codex Work Charter policy to [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). It is an external DSH bundle with a Host policy service and an additive browser Client. The Host owns authoritative Charter state and deterministic transition checks; [`session-coordinator-dsh`](https://github.com/junwei529/session-coordinator-dsh) supplies the Workstream, Session-addressing, correlation, delivery, and recovery capabilities that Work Charter needs but DSH does not natively provide.
+`work-charter-dsh`—the Work Charter DSH Plugin (WCDP)—brings
+[Work Charter](https://github.com/junwei529/work-charter) to
+[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness).
 
-The source repository is [`junwei529/work-charter-dsh`](https://github.com/junwei529/work-charter-dsh). The `v0.1.0-alpha.1` distribution target is a GitHub Pre-release backed by a checksumed source-bound artifact and unsigned local provenance. The package remains `private: true` and is not published to npm; the exact DSH alpha and scdp dependency artifacts therefore remain part of the compatibility and verification boundary.
+Work Charter is a lightweight governance layer for consequential agent work.
+It turns an open-ended request into an explicit, recoverable contract: what
+outcome is intended, what authority exists, who may write, what evidence is
+required, which decisions remain open, when work must stop, and what must be
+revalidated before it resumes.
 
-The candidate currently includes:
+WCDP keeps that policy model and adapts its integration to DSH. It is not a
+different charter system and does not assume that users already know the Codex
+Skill. The main difference is the Harness surface: the Codex edition is a
+Codex Skill, while WCDP is an external DSH bundle with Host-owned policy state,
+DSH model tools and runtime context, and an additive read-only browser Client.
 
-- a strict TypeScript Charter state machine covering outcome, scope, authority, roles, one writer, evidence, decisions, stop/resume, Result Notices, dispositions, acceptance, and recovery;
-- a plugin-owned DSH storage domain with schema validation and explicit incompatible/unknown failure states;
-- integration with the public `session-coordinator-dsh` service contract, without importing its implementation internals;
-- a DSH Skill, model tools, and bounded dynamic runtime context that can be reconstructed from the Session log;
-- typed Host interfaces, a read-only Remote projection, and additive global/per-Session browser UI contributions;
-- unit tests for policy, model-context, storage/transport uncertainty, and Result Notice/disposition behavior.
+> **Status:** public GitHub Pre-release
+> [`v0.1.0-alpha.1`](https://github.com/junwei529/work-charter-dsh/releases/tag/v0.1.0-alpha.1),
+> qualified only on the exact DSH/SCDP graph documented below. The source is
+> public, but the package remains `private: true` and is not published to npm.
 
-The implementation does not replace DSH goals, plans, workflows, approvals, Sessions, subagents, sandboxing, the agent loop, or Trajectory. A Charter never grants filesystem, shell, Git, network, installation, publication, or external-effect authority. Browser surfaces are read-only affordances, not enforcement or an identity boundary. The candidate cannot govern, approve, accept, or evaluate itself.
+## What a Work Charter does
 
-The current adaptation targets official DSH `dsh-v0.1.2-alpha.1` and the paired private `session-coordinator-dsh@0.1.1-alpha.1` candidate. It follows alpha.1's split Client ownership: Cordis owns the Context, API Remotes owns the generated Remote projection, UI Renderer owns slots, and UI Session supplies Session-scoped props. The removed aggregate `dsh-client-runtime` is neither imported nor declared.
+A Charter keeps the contract smaller than the work it protects. Routine work
+does not need one. For consequential, interrupted, multi-Session, or
+authority-sensitive work, a Charter makes these responsibilities explicit:
+
+- **Outcome and boundaries** — the intended result, non-goals, and protected
+  scope;
+- **Authority** — what has actually been approved, at which revision, without
+  converting discussion into permission;
+- **Roles and writer ownership** — who is coordinating, implementing, or
+  assessing, with one active writer;
+- **Evidence and acceptance** — what was tested or observed, what remains
+  `UNKNOWN`, and who may accept the result;
+- **Decisions and recovery** — what blocks progress, when to pause, how to
+  resume safely, and how to recover after interruption or drift.
+
+The contract separates four kinds of information so implementation details do
+not silently become permanent requirements:
+
+1. **Confirmed Contract** — user-confirmed outcomes, acceptance, and
+   exclusions;
+2. **Necessary Guardrails** — permissions, safety, reversibility, trust, and
+   compatibility boundaries;
+3. **Working Proposal** — replaceable tools, files, algorithms, and execution
+   steps;
+4. **Assumptions / Open Decisions** — uncertainty that must not be promoted to
+   fact without a decision.
+
+Work Charter supports progressively stronger coordination rather than forcing
+every task into a large workflow:
+
+- `L0`: ordinary work with no active Charter;
+- `L1` / `current-task`: one bounded Charter in the current task;
+- `L2` / `durable-single-agent`: one agent plus a durable recovery anchor;
+- `L3` / `planner-executor`: separate planning or assessment from the sole
+  writer;
+- `L4` / `standard-ope`: Orchestrator, Planner, and Executor responsibilities
+  for governed multi-phase work.
+
+A higher level adds coordination and recovery protection, not action
+authority. A Charter never grants filesystem, shell, Git, network,
+installation, publication, or other external-effect permission.
+
+## Same policy, different Harness
+
+WCDP is bound to the independently versioned Codex Work Charter `v0.3.0`
+baseline. It preserves the core policy concepts while using DSH-native
+extension points:
+
+| Concern | Codex Work Charter | Work Charter for DSH |
+|---|---|---|
+| Delivery | Codex Skill | External DSH bundle |
+| Policy behavior | Advisory guidance within Codex | Host-owned state and deterministic Charter transition checks |
+| Model surface | Skill instructions in the Codex task | DSH Skill, model tools, and bounded dynamic runtime context |
+| Durable context | Task plus an approved project carrier when needed | Host storage and model-visible snapshots reconstructable from the DSH Session log |
+| User interface | Codex conversation workflow | Additive global/per-Session actions and a read-only browser overlay |
+| Multi-Session coordination | Uses the surrounding Codex task/project workflow | Uses `session-coordinator-dsh` as a required coordination substrate |
+
+WCDP does not replace DSH goals, plans, workflows, approvals, Sessions,
+subagents, sandboxing, the agent loop, or Trajectory. The Host is authoritative
+only for Charter policy state and transition validity. Browser components are
+presentation and navigation affordances, not enforcement or an identity
+boundary.
+
+## Why WCDP requires session-coordinator-dsh
+
+Work Charter policy and cross-Session coordination are separate
+responsibilities. The targeted DSH version supplies Sessions and persistence,
+but it does not expose the complete Workstream-level addressing, correlation,
+delivery, disposition, and recovery contract that WCDP needs. That missing
+coordination layer is provided by
+[`session-coordinator-dsh` (SCDP)](https://github.com/junwei529/session-coordinator-dsh).
+
+```text
+Work Charter policy semantics
+            |
+            v
+work-charter-dsh (WCDP)
+  Charter state, authority, roles, writer, evidence,
+  decisions, transitions, acceptance, and recovery policy
+            |
+            v
+session-coordinator-dsh (SCDP)
+  Workstream identity, Session membership and addressing,
+  immutable coordination records, delivery, and reconciliation
+            |
+            v
+DeepSeek Harness
+  Sessions, storage, tools, skills, approvals, UI, and agent runtime
+```
+
+WCDP consumes only SCDP's public service contract. It does not import or
+modify SCDP implementation internals, and it does not reimplement SCDP's
+transport or coordination ledger. SCDP likewise does not decide Charter
+policy: WCDP determines whether a Result Notice or disposition is valid for
+the active Charter; SCDP addresses, records, delivers, and reconciles that
+message.
+
+SCDP is therefore a required runtime dependency, not an optional integration.
+The packaged DSH profile patch mounts SCDP before WCDP so the coordination
+service exists before the policy service activates. Missing or uncertain
+coordination state fails closed instead of being treated as permission to
+continue.
+
+## DSH surfaces
+
+The alpha bundle provides:
+
+- a strict TypeScript Host state machine and plugin-owned storage domain;
+- compare-and-set Charter and authority revisions with fail-closed role,
+  writer, evidence, decision, Result Notice, disposition, and close checks;
+- the DSH Skill `work-charter` and five model tools for status, draft creation,
+  transition, Result Notice submission, and disposition return;
+- bounded active/paused Charter context persisted through the DSH Session log;
+- typed same-process Host interfaces and a deliberately read-only browser
+  Remote;
+- additive global and per-Session UI actions plus a read-only Charter overlay.
+
+The candidate cannot govern, approve, accept, or evaluate itself. Independent
+assessment remains independent even when WCDP enforces the mechanics of role
+and transition separation.
+
+## Exact qualified release graph
+
+The current compatibility claim is exact and artifact-bound:
+
+- `work-charter-dsh@0.1.0-alpha.1`;
+- [`session-coordinator-dsh@0.1.1-alpha.1`](https://github.com/junwei529/session-coordinator-dsh/releases/tag/v0.1.1-alpha.1),
+  public contract `3`, logical schema `2`;
+- official DSH `dsh-v0.1.2-alpha.1`, commit
+  `cd5ef8148158c3a752a658978873241fdf8e2bbc`.
+
+No DSH version range is implied. Later prereleases, registry-backed
+installation, other storage providers, multi-process or cross-host operation,
+and production support remain unqualified.
 
 ## Install from the GitHub Pre-release artifacts
 
-The package is not published to npm. Obtain the checksum-verified `session-coordinator-dsh-0.1.1-alpha.1.tgz` and `work-charter-dsh-0.1.0-alpha.1.tgz` GitHub Pre-release assets, then add both tarballs to the same profile of an exact `dsh-v0.1.2-alpha.1` installation. Run the command from the directory containing the two files, replacing `<profile>` with an existing DSH profile such as `web` or `headless`:
+Neither WCDP nor its exact SCDP dependency is published to npm. Download and
+checksum-verify these two GitHub Pre-release assets:
+
+- `session-coordinator-dsh-0.1.1-alpha.1.tgz`;
+- `work-charter-dsh-0.1.0-alpha.1.tgz`.
+
+Add both tarballs to the same profile of an exact `dsh-v0.1.2-alpha.1`
+installation. Run from the directory containing both files and replace
+`<profile>` with an existing profile such as `web` or `headless`:
 
 ```powershell
 dsh plugin --profile <profile> add .\session-coordinator-dsh-0.1.1-alpha.1.tgz .\work-charter-dsh-0.1.0-alpha.1.tgz
 dsh --profile <profile> --dump-default-config
 ```
 
-The scdp package intentionally installs as a plain profile dependency, so DSH may print its orientation warning that the package declares no `dsh.bundle`; Work Charter is the bundle layer. Its packaged `cordis.patch.yml` mounts `session-coordinator-dsh` first and `work-charter-dsh` second. The config dump should contain both rows. Do not install either package directly from npm or a Git checkout for this qualified alpha graph.
+SCDP intentionally installs as a plain profile dependency and may emit an
+orientation warning because it declares no `dsh.bundle`; WCDP is the bundle
+layer. The configuration dump should show SCDP mounted before WCDP. Do not use
+an npm or Git-checkout substitution for this qualified alpha graph.
 
-The candidate now builds and packs, and a fresh task-local consumer installs only the packed Work Charter/scdp candidates plus artifacts produced from the exact clean DSH tag. Strict consumer typechecking, real Loader composition, Host enforcement, JSON restart/reopen, Session-log context recovery, scdp Result Notice/disposition flow, Client disposal/reload, and a real Chromium additive-UI smoke check pass on that exact graph. The release correction also carries the DSH bundle declaration and ordered profile patch required for `dsh plugin` to activate Work Charter as a profile layer.
+## What has—and has not—been verified
 
-A dedicated `standard-ope` packed-consumer run starts three distinct real DSH Orchestrator, Planner, and Executor AgentLoops. The Host permits the Planner→Orchestrator phase Result Notice only after an accepted Executor result, causally links the phase route to that execution disposition, and preserves fail-closed role and sequence checks. O→P Mandate, P→E Definition, E→P execution Result Notice, P→E execution disposition, P→O phase Result Notice, and O→P phase disposition all reach durable `acknowledged` state and are consumed by the target role models through the Work Charter/scdp path.
+On the exact graph above, frozen/offline producers created reproducible release
+artifacts, a fresh consumer passed strict typechecking and real Loader/runtime
+tests, and a real Chromium smoke test exercised the additive UI. A dedicated
+packed-consumer `standard-ope` run started distinct DSH Orchestrator, Planner,
+and Executor AgentLoops and carried the complete O→P→E result/disposition chain
+through WCDP and SCDP with durable acknowledged delivery.
 
-These results establish bounded local base-runtime and L4 Standard O/P/E behavior plus reproducible GitHub Pre-release artifacts on the exact qualified graph. They do not establish npm installability, broad DSH compatibility, full native-feature UI semantics, or Work Charter efficacy. The exact DSH/scdp packages remain unavailable from npm, no controlled baseline comparison or independent semantic assessment has run, and the WCDP tag and GitHub Release have not yet been created.
+This establishes bounded base-runtime and L4 mechanism behavior for the exact
+alpha graph. It does **not** establish broad DSH compatibility,
+natural-language model quality, causal improvement in project outcomes, full
+native-feature UI semantics, npm installability, or general Work Charter
+efficacy. No controlled baseline comparison or independent semantic-efficacy
+assessment has been run.
 
-## Compatibility boundary
+The qualified `work-charter-dsh-0.1.0-alpha.1.tgz` bytes are a
+checksum-bound packaging-time snapshot. Its bundled 52-line README predates
+publication and still says that the tag and GitHub Release do not yet exist.
+This repository documentation update does not replace, alter, or re-sign the
+98,593-byte artifact that was published and verified. Use its published
+checksum—not the asset name or URL alone—to identify those qualified bytes,
+and use the repository README for current release status.
 
-The candidate's current claim is exact local-artifact runtime and release qualification with the DSH/scdp identities recorded in [the specification](docs/SPEC.md), not a version range or a public-registry installation claim. Newer DSH prereleases are not implicitly supported. Current dependency state and the next verification gate are recorded in [status](docs/STATUS.md), while commands, evidence, and limitations live in [verification](docs/VERIFICATION.md).
-
-## License
+## License and project navigation
 
 Licensed under the [MIT License](LICENSE). The browser bundle's included
-dependency notices are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-## Project navigation
+dependency notices are recorded in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 - [Product specification](docs/SPEC.md)
 - [Current status and recovery entry](docs/STATUS.md)
-- [Verification method and evidence limits](docs/VERIFICATION.md)
+- [Verification method, evidence, and limitations](docs/VERIFICATION.md)
