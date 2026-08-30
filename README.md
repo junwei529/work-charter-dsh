@@ -19,7 +19,18 @@ The implementation does not replace DSH goals, plans, workflows, approvals, Sess
 
 The current adaptation targets official DSH `dsh-v0.1.2-alpha.1` and the paired private `session-coordinator-dsh@0.1.1-alpha.1` candidate. It follows alpha.1's split Client ownership: Cordis owns the Context, API Remotes owns the generated Remote projection, UI Renderer owns slots, and UI Session supplies Session-scoped props. The removed aggregate `dsh-client-runtime` is neither imported nor declared.
 
-The candidate now builds and packs, and a fresh task-local consumer installs only the packed Work Charter/scdp candidates plus artifacts produced from the exact clean DSH tag. Strict consumer typechecking, real Loader composition, Host enforcement, JSON restart/reopen, Session-log context recovery, scdp Result Notice/disposition flow, Client disposal/reload, and a real Chromium additive-UI smoke check pass on that exact graph.
+## Install from the GitHub Pre-release artifacts
+
+The package is not published to npm. Obtain the checksum-verified `session-coordinator-dsh-0.1.1-alpha.1.tgz` and `work-charter-dsh-0.1.0-alpha.1.tgz` GitHub Pre-release assets, then add both tarballs to the same profile of an exact `dsh-v0.1.2-alpha.1` installation. Run the command from the directory containing the two files, replacing `<profile>` with an existing DSH profile such as `web` or `headless`:
+
+```powershell
+dsh plugin --profile <profile> add .\session-coordinator-dsh-0.1.1-alpha.1.tgz .\work-charter-dsh-0.1.0-alpha.1.tgz
+dsh --profile <profile> --dump-default-config
+```
+
+The scdp package intentionally installs as a plain profile dependency, so DSH may print its orientation warning that the package declares no `dsh.bundle`; Work Charter is the bundle layer. Its packaged `cordis.patch.yml` mounts `session-coordinator-dsh` first and `work-charter-dsh` second. The config dump should contain both rows. Do not install either package directly from npm or a Git checkout for this qualified alpha graph.
+
+The candidate now builds and packs, and a fresh task-local consumer installs only the packed Work Charter/scdp candidates plus artifacts produced from the exact clean DSH tag. Strict consumer typechecking, real Loader composition, Host enforcement, JSON restart/reopen, Session-log context recovery, scdp Result Notice/disposition flow, Client disposal/reload, and a real Chromium additive-UI smoke check pass on that exact graph. The release correction also carries the DSH bundle declaration and ordered profile patch required for `dsh plugin` to activate Work Charter as a profile layer.
 
 A dedicated `standard-ope` packed-consumer run starts three distinct real DSH Orchestrator, Planner, and Executor AgentLoops. The Host permits the Planner→Orchestrator phase Result Notice only after an accepted Executor result, causally links the phase route to that execution disposition, and preserves fail-closed role and sequence checks. O→P Mandate, P→E Definition, E→P execution Result Notice, P→E execution disposition, P→O phase Result Notice, and O→P phase disposition all reach durable `acknowledged` state and are consumed by the target role models through the Work Charter/scdp path.
 

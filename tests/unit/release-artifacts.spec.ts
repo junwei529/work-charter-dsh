@@ -39,6 +39,7 @@ interface ReleaseAuditModule {
   validateReleaseMetadata: (manifest: Record<string, unknown>) => Record<string, unknown>
   auditSourceMapObject: (map: Record<string, unknown>, label: string) => void
   auditLicenseBytes: (bytes: Buffer) => Promise<void>
+  validateBundlePatchBytes: (bytes: Buffer) => void
   auditText: (text: string, label: string) => void
   validatePackageFileList: (files: string[]) => string[]
   validateDshArtifactDescriptors: (descriptors: DshArtifactDescriptor[]) => DshArtifactDescriptor[]
@@ -84,6 +85,7 @@ const expectedPackageFiles = [
   'README.md',
   'THIRD_PARTY_NOTICES.md',
   'assets/work-charter-dsh.md',
+  'cordis.patch.yml',
   'lib/client.js',
   'lib/client.js.map',
   'lib/index.js',
@@ -195,6 +197,7 @@ describe('release-readiness artifacts', () => {
     expect(() => audit.validateReleaseMetadata({ ...manifest, private: false })).toThrow(/private/)
     expect(() => audit.validateReleaseMetadata({ ...manifest, repository: { type: 'git', url: 'https://example.test' } })).toThrow(/repository/)
     expect(() => audit.validateReleaseMetadata({ ...manifest, peerDependencies: {} })).toThrow(/peer dependency/)
+    expect(() => audit.validateReleaseMetadata({ ...manifest, dsh: { ...(manifest.dsh as object), bundle: undefined } })).toThrow(/bundle patch/)
     expect(() => audit.validateReleaseMetadata({ ...manifest, publishConfig: {} })).toThrow(/publishConfig/)
     expect(audit.validatePackageFileList(expectedPackageFiles)).toEqual(expectedPackageFiles)
     expect(() => audit.validatePackageFileList(expectedPackageFiles.slice(1))).toThrow(/missing=LICENSE/)
@@ -207,6 +210,11 @@ describe('release-readiness artifacts', () => {
     const licenseText = (await readFile('LICENSE', 'utf8')).replaceAll('\r\n', '\n')
     await expect(audit.auditLicenseBytes(Buffer.from(licenseText))).resolves.toBeUndefined()
     await expect(audit.auditLicenseBytes(Buffer.from(`${licenseText}\nAdditional terms.\n`))).rejects.toThrow(/complete expected text/)
+    const bundlePatch = await readFile('cordis.patch.yml')
+    expect(() => { audit.validateBundlePatchBytes(bundlePatch); }).not.toThrow()
+    expect(() => {
+      audit.validateBundlePatchBytes(Buffer.from('- insert:\n    - id: work-charter\n      name: work-charter-dsh\n'))
+    }).toThrow(/session-coordinator-dsh before/)
   })
 
   it('normalizes only the installed DSH/scdp boundary and binds published scdp integrity', () => {

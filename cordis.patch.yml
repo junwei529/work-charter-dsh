@@ -1,0 +1,8 @@
+# Mount the public session coordinator before Work Charter so its injected
+# service is available when the policy service activates.
+- insert:
+    - id: session-coordinator
+      name: session-coordinator-dsh
+
+    - id: work-charter
+      name: work-charter-dsh

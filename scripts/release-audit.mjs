@@ -50,6 +50,17 @@ const EXPECTED_DSH_INJECT = [
   '@deepseek-ai/dsh-client-ui-renderer',
   '@deepseek-ai/dsh-client-ui-sidebar',
 ]
+const EXPECTED_BUNDLE_PATCH = [
+  '# Mount the public session coordinator before Work Charter so its injected',
+  '# service is available when the policy service activates.',
+  '- insert:',
+  '    - id: session-coordinator',
+  '      name: session-coordinator-dsh',
+  '',
+  '    - id: work-charter',
+  '      name: work-charter-dsh',
+  '',
+].join('\n')
 const EXPECTED_DEPENDENCIES = { zod: '4.4.3' }
 const EXPECTED_PEER_DEPENDENCIES = {
   '@deepseek-ai/cordis': '4.0.1',
@@ -106,6 +117,7 @@ const EXPECTED_PACKAGE_FILES = [
   'README.md',
   'THIRD_PARTY_NOTICES.md',
   'assets/work-charter-dsh.md',
+  'cordis.patch.yml',
   'lib/client.js',
   'lib/client.js.map',
   'lib/index.js',
@@ -141,12 +153,19 @@ const EXPECTED_PACKAGE_FILES = [
   'lib/types/types.js',
   'package.json',
 ].sort()
-const REQUIRED_RELEASE_FILES = ['README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'assets/work-charter-dsh.md']
+const REQUIRED_RELEASE_FILES = [
+  'README.md',
+  'LICENSE',
+  'THIRD_PARTY_NOTICES.md',
+  'assets/work-charter-dsh.md',
+  'cordis.patch.yml',
+]
 const SOURCE_ROOT_FILES = [
   'package.json',
   'README.md',
   'LICENSE',
   'THIRD_PARTY_NOTICES.md',
+  'cordis.patch.yml',
   'tsconfig.base.json',
   'tsconfig.client.json',
   'tsconfig.host.json',
@@ -212,6 +231,7 @@ export function validateReleaseMetadata(manifest) {
   if (manifest.packageManager !== 'pnpm@11.7.0') throw new Error('package-manager drift')
   if (manifest.engines?.node !== '^22.19.0 || >=24.0.0') throw new Error('Node engine drift')
   if (JSON.stringify(manifest.exports) !== JSON.stringify(EXPECTED_EXPORTS)) throw new Error('public exports drift')
+  if (manifest.dsh?.bundle?.patch !== './cordis.patch.yml') throw new Error('DSH bundle patch metadata drift')
   if (JSON.stringify(manifest.dsh?.client?.inject) !== JSON.stringify(EXPECTED_DSH_INJECT)
     || manifest.dsh?.client?.platform !== 'web') {
     throw new Error('DSH Client metadata drift')
@@ -252,6 +272,14 @@ export function validatePackageFileList(files) {
     throw new Error(`package file allowlist drift: missing=${missing.join(',')} extra=${extra.join(',')}`)
   }
   return actual
+}
+
+export function validateBundlePatchBytes(bytes) {
+  if (!bytes || bytes.length === 0) throw new Error('DSH bundle patch is missing')
+  const normalizedText = bytes.toString('utf8').replaceAll('\r\n', '\n')
+  if (normalizedText !== EXPECTED_BUNDLE_PATCH) {
+    throw new Error('DSH bundle patch must mount session-coordinator-dsh before work-charter-dsh')
+  }
 }
 
 export function validateDshArtifactDescriptors(descriptors) {
@@ -729,6 +757,7 @@ export async function auditCurrentBuild(root = repositoryRoot) {
   const manifest = validateReleaseMetadata(JSON.parse(await readFile(join(root, 'package.json'), 'utf8')))
   for (const file of REQUIRED_RELEASE_FILES) await assertFile(join(root, file))
   await auditLicense(join(root, 'LICENSE'))
+  await validateBundlePatchBytes(await readFile(join(root, 'cordis.patch.yml')))
   await auditPublicReleaseDocuments({
     readme: await readFile(join(root, 'README.md'), 'utf8'),
     notices: await readFile(join(root, 'THIRD_PARTY_NOTICES.md'), 'utf8'),
@@ -765,6 +794,7 @@ export async function auditTarball(path) {
   if (!entries.has('package/package.json')) throw new Error('archive is missing package/package.json')
   await auditLicenseBytes(entries.get('package/LICENSE'))
   const manifest = validateReleaseMetadata(JSON.parse(entries.get('package/package.json').toString('utf8')))
+  await validateBundlePatchBytes(entries.get('package/cordis.patch.yml'))
   await auditPublicReleaseDocuments({
     readme: entries.get('package/README.md').toString('utf8'),
     notices: entries.get('package/THIRD_PARTY_NOTICES.md').toString('utf8'),
@@ -776,7 +806,7 @@ export async function auditTarball(path) {
     const content = entries.get(name)
     const local = name.slice('package/'.length)
     if (local.endsWith('.map')) auditSourceMapObject(JSON.parse(content.toString('utf8')), local)
-    if (/\.(?:js|json|map|md|d\.ts)$/.test(local)) auditText(content.toString('utf8'), local)
+    if (/\.(?:js|json|map|md|ya?ml|d\.ts)$/.test(local)) auditText(content.toString('utf8'), local)
     perFile.push({ path: local, sha256: hash(content, 'sha256'), bytes: content.length })
   }
   const client = entries.get('package/lib/client.js')?.toString('utf8') ?? ''
@@ -1225,8 +1255,10 @@ export async function auditLicenseBytes(bytes) {
 async function auditPublicReleaseDocuments({ readme, notices, skill }) {
   if (!readme.includes('https://github.com/junwei529/work-charter-dsh')
     || !readme.includes('private')
-    || !readme.includes('MIT License')) {
-    throw new Error('README GitHub/private/license boundary is incomplete')
+    || !readme.includes('MIT License')
+    || !readme.includes('dsh plugin --profile <profile> add')
+    || !readme.includes('cordis.patch.yml')) {
+    throw new Error('README GitHub/private/license/install boundary is incomplete')
   }
   if (!/Zod 4\.4\.3[\s\S]*MIT License/.test(notices)) {
     throw new Error('THIRD_PARTY_NOTICES release boundary is incomplete')

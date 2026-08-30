@@ -47,6 +47,7 @@
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "assets/work-charter-dsh.md",
+    "cordis.patch.yml",
     "lib/index.js",
     "lib/client.js",
     "lib/client.js.map",
@@ -60,6 +61,9 @@
     "lib/typert.remote-client.d.ts.map"
   ],
   "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "inject": [
         "@deepseek-ai/dsh-api-remotes",

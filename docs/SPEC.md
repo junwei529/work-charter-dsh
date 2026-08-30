@@ -111,6 +111,8 @@ For the alpha.1 split Client architecture, the bundle consumes only the public o
 
 - Strict TypeScript/TSX production sources target ES2024; the Host emits Node ESM.
 - `./client` is DSH's lazy-CJS closure-factory artifact inside an ESM package, not a general CommonJS surface.
+- the package declares `dsh.bundle.patch` as `./cordis.patch.yml`; that patch inserts `session-coordinator-dsh` before `work-charter-dsh`, so the required coordination service is available before the policy service activates;
+- the qualified profile-install route adds the checksum-bound scdp and WCDP tarballs to the same exact DSH profile through `dsh plugin`; scdp remains a plain profile dependency and WCDP is the bundle layer;
 - the private scdp candidate, Cordis, consumed DSH Service Definitions, and React are exact peer plus development dependencies so the containing profile supplies one runtime identity;
 - Zod validates durable, wire, model/tool, and user-controlled inputs.
 - the browser artifact bundles Zod, so the package includes its exact installed-version MIT notice in `THIRD_PARTY_NOTICES.md`; peer dependencies are not represented as bundled payload.
@@ -129,7 +131,7 @@ For the alpha.1 split Client architecture, the bundle consumes only the public o
 
 v1 is acceptable only when evidence shows that:
 
-- the external bundle installs and loads with the exact pinned DSH and scdp identities;
+- `dsh plugin` records the external WCDP package as a bundle layer, its composed profile contains the ordered scdp/WCDP rows, and an actual profile boot loads both with the exact pinned DSH and scdp identities;
 - Host ESM, declarations, Remote artifacts, and lazy-CJS Client format resolve from a clean consumer;
 - a Charter can be created, attached, persisted, restarted, reopened, and recovered for a Workstream and Session;
 - stale/unauthorized transitions fail closed at the Host while authorized transitions remain usable;
@@ -142,6 +144,6 @@ v1 is acceptable only when evidence shows that:
 
 ## Current acceptance disposition
 
-The exact final local-artifact graph satisfies the package/type, two-producer release reproducibility, clean-consumer, Loader, Host enforcement, JSON restart/reopen, base scdp coordination, logged-context, bounded Chromium, and Standard O/P/E L4 acceptance layers recorded in `docs/VERIFICATION.md`. The dedicated L4 run uses three distinct real DSH role AgentLoops and the Work Charter/scdp path for all six messages. The Host rejects a premature Planner phase report, permits it only after an accepted Executor result, causally links P→O to the execution disposition and O→P to the phase notice, and emits distinct phase-level message schemas. All six deliveries reach durable `acknowledged` state and are consumed by their target role models.
+The exact final local-artifact graph satisfies the package/type, two-producer release reproducibility, real DSH CLI/profile bundle activation, clean-consumer, Loader, Host enforcement, JSON restart/reopen, base scdp coordination, logged-context, bounded Chromium, and Standard O/P/E L4 acceptance layers recorded in `docs/VERIFICATION.md`. The dedicated L4 run uses three distinct real DSH role AgentLoops and the Work Charter/scdp path for all six messages. The Host rejects a premature Planner phase report, permits it only after an accepted Executor result, causally links P→O to the execution disposition and O→P to the phase notice, and emits distinct phase-level message schemas. All six deliveries reach durable `acknowledged` state and are consumed by their target role models.
 
 Overall v1 acceptance also remains open because no controlled upstream-baseline/candidate comparison or independent semantic assessment has run. The current browser evidence proves additive seat ownership and Work Charter behavior in real Chromium; native goal/plan/workflow/approval/Conversation/Trajectory entries are ownership sentinels in the qualification fixture, not full semantic end-to-end tests of those native features.
