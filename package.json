@@ -72,11 +72,14 @@
     }
   },
   "scripts": {
-    "build": "node scripts/clean-build.mjs && tsc -b tsconfig.host.json && node scripts/generate-typert.mjs && tsdown --env.DSH_BUILD_FACE host && tsc -b tsconfig.client.json && tsdown --env.DSH_BUILD_FACE client",
+    "build": "node scripts/clean-build.mjs && tsc -b tsconfig.host.json && node scripts/generate-typert.mjs && tsdown --env.DSH_BUILD_FACE host && tsc -b tsconfig.client.json && tsdown --env.DSH_BUILD_FACE client && node scripts/release-audit.mjs normalize-source-maps",
     "typecheck": "tsc -b tsconfig.host.json tsconfig.client.json && tsc -p tsconfig.test.json --pretty false",
     "lint": "eslint src tests tsdown.config.ts vitest.config.ts",
     "test": "npm run build && vitest run",
     "test:unit": "npm run build && vitest run tests/unit",
+    "release:audit": "node scripts/release-audit.mjs audit-current",
+    "release:reproduce": "node scripts/release-audit.mjs reproduce",
+    "pack:check": "node scripts/release-audit.mjs pack-current",
     "verify:dsh-source": "node scripts/verify-dsh-alpha-source.mjs"
   },
   "dependencies": {

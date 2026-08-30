@@ -1,15 +1,15 @@
 # work-charter-dsh specification
 
-Status: implementation contract for the DSH alpha.1 locally runtime-qualified candidate. Public-registry installation, semantic efficacy, and release acceptance remain open.
+Status: implementation contract for the DSH alpha.1 locally runtime- and release-qualified GitHub Pre-release candidate. Public-registry installation, public WCDP publication, semantic efficacy, and overall v1 acceptance remain open.
 
 ## Bound identities and compatibility
 
 - `WC-UPSTREAM`: installed Codex Skill `junwei529/work-charter` version `0.3.0`, package SHA-256 `7b67ea1f7073fa66ac91c36f3e39c735b54c04174e2fa3672068f8fa8948a5b2`, normalized package tree `0ac3cbb0f1fa8fa51d8f832c8127eabc9863ec9e`.
 - DSH source target: official tag `dsh-v0.1.2-alpha.1`, commit `cd5ef8148158c3a752a658978873241fdf8e2bbc`, Node `^22.19.0 || >=24.0.0`.
-- Coordination dependency: private source candidate `session-coordinator-dsh` `0.1.1-alpha.1`, public contract version `3`, logical storage schema `2`, adapted to that exact DSH alpha.1 source line.
+- Coordination dependency: private package `session-coordinator-dsh` `0.1.1-alpha.1`, public contract version `3`, logical storage schema `2`, adapted to that exact DSH alpha.1 source line and distributed as a checksumed GitHub Pre-release artifact.
 - Package contract: external package id `work-charter-dsh`; its current candidate version and MIT SPDX metadata are owned by `package.json`, with the full grant in the root `LICENSE`.
 
-Compatibility is exact and artifact-bound, not a range claim. Static/source checks establish that the candidate follows the pinned public contracts. A task-local graph made only from packed candidates and artifacts produced from the exact clean DSH tag establishes bounded clean-consumer and runtime behavior for that graph. The exact alpha.1 DSH packages and the scdp candidate are not published to npm, so ordinary registry-backed installation, formal release reproducibility, and every other DSH version remain `BLOCKED`/`UNKNOWN` rather than inheriting the local result.
+Compatibility is exact and artifact-bound, not a range claim. Static/source checks establish that the candidate follows the pinned public contracts. A task-local graph made only from packed candidates and artifacts produced from the exact clean DSH tag establishes bounded clean-consumer and runtime behavior for that graph. A frozen, offline, two-producer build binds the exact DSH artifact set and published scdp artifact and establishes local release reproducibility for this WCDP candidate. The exact alpha.1 DSH packages and scdp package are not published to npm, so ordinary registry-backed installation and every other DSH version remain `BLOCKED`/`UNKNOWN` rather than inheriting the local result.
 
 ## Outcome
 
@@ -142,6 +142,6 @@ v1 is acceptable only when evidence shows that:
 
 ## Current acceptance disposition
 
-The exact final local-artifact graph satisfies the package/type, clean-consumer, Loader, Host enforcement, JSON restart/reopen, base scdp coordination, logged-context, bounded Chromium, and Standard O/P/E L4 acceptance layers recorded in `docs/VERIFICATION.md`. The dedicated L4 run uses three distinct real DSH role AgentLoops and the Work Charter/scdp path for all six messages. The Host rejects a premature Planner phase report, permits it only after an accepted Executor result, causally links P→O to the execution disposition and O→P to the phase notice, and emits distinct phase-level message schemas. All six deliveries reach durable `acknowledged` state and are consumed by their target role models.
+The exact final local-artifact graph satisfies the package/type, two-producer release reproducibility, clean-consumer, Loader, Host enforcement, JSON restart/reopen, base scdp coordination, logged-context, bounded Chromium, and Standard O/P/E L4 acceptance layers recorded in `docs/VERIFICATION.md`. The dedicated L4 run uses three distinct real DSH role AgentLoops and the Work Charter/scdp path for all six messages. The Host rejects a premature Planner phase report, permits it only after an accepted Executor result, causally links P→O to the execution disposition and O→P to the phase notice, and emits distinct phase-level message schemas. All six deliveries reach durable `acknowledged` state and are consumed by their target role models.
 
 Overall v1 acceptance also remains open because no controlled upstream-baseline/candidate comparison or independent semantic assessment has run. The current browser evidence proves additive seat ownership and Work Charter behavior in real Chromium; native goal/plan/workflow/approval/Conversation/Trajectory entries are ownership sentinels in the qualification fixture, not full semantic end-to-end tests of those native features.

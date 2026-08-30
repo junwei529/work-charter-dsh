@@ -1,8 +1,10 @@
 # work-charter-dsh
 
-Status: **DSH alpha.1 base runtime and L4 Standard O/P/E qualified candidate — private, unreleased, and not independently semantically accepted**
+Status: **DSH alpha.1 locally release-qualified base runtime and L4 Standard O/P/E candidate — private, not yet published, and not independently semantically accepted**
 
 `work-charter-dsh` adapts the current local Codex Work Charter policy to [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). It is an external DSH bundle with a Host policy service and an additive browser Client. The Host owns authoritative Charter state and deterministic transition checks; [`session-coordinator-dsh`](https://github.com/junwei529/session-coordinator-dsh) supplies the Workstream, Session-addressing, correlation, delivery, and recovery capabilities that Work Charter needs but DSH does not natively provide.
+
+The source repository is [`junwei529/work-charter-dsh`](https://github.com/junwei529/work-charter-dsh). The `v0.1.0-alpha.1` distribution target is a GitHub Pre-release backed by a checksumed source-bound artifact and unsigned local provenance. The package remains `private: true` and is not published to npm; the exact DSH alpha and scdp dependency artifacts therefore remain part of the compatibility and verification boundary.
 
 The candidate currently includes:
 
@@ -21,11 +23,11 @@ The candidate now builds and packs, and a fresh task-local consumer installs onl
 
 A dedicated `standard-ope` packed-consumer run starts three distinct real DSH Orchestrator, Planner, and Executor AgentLoops. The Host permits the Planner→Orchestrator phase Result Notice only after an accepted Executor result, causally links the phase route to that execution disposition, and preserves fail-closed role and sequence checks. O→P Mandate, P→E Definition, E→P execution Result Notice, P→E execution disposition, P→O phase Result Notice, and O→P phase disposition all reach durable `acknowledged` state and are consumed by the target role models through the Work Charter/scdp path.
 
-These results establish bounded local base-runtime and L4 Standard O/P/E behavior on the exact qualified graph, not npm installability, release readiness, broad DSH compatibility, full native-feature UI semantics, or Work Charter efficacy. The exact DSH/scdp packages remain unavailable from npm, no controlled baseline comparison or independent semantic assessment has run, and this repository intentionally provides no public installation instructions, tag, Release, or readiness claim.
+These results establish bounded local base-runtime and L4 Standard O/P/E behavior plus reproducible GitHub Pre-release artifacts on the exact qualified graph. They do not establish npm installability, broad DSH compatibility, full native-feature UI semantics, or Work Charter efficacy. The exact DSH/scdp packages remain unavailable from npm, no controlled baseline comparison or independent semantic assessment has run, and the WCDP tag and GitHub Release have not yet been created.
 
 ## Compatibility boundary
 
-The candidate's current claim is exact local-artifact runtime qualification with the DSH/scdp identities recorded in [the specification](docs/SPEC.md), not a version range or a public-registry installation claim. Newer DSH prereleases are not implicitly supported. Current dependency state and the next verification gate are recorded in [status](docs/STATUS.md), while commands, evidence, and limitations live in [verification](docs/VERIFICATION.md).
+The candidate's current claim is exact local-artifact runtime and release qualification with the DSH/scdp identities recorded in [the specification](docs/SPEC.md), not a version range or a public-registry installation claim. Newer DSH prereleases are not implicitly supported. Current dependency state and the next verification gate are recorded in [status](docs/STATUS.md), while commands, evidence, and limitations live in [verification](docs/VERIFICATION.md).
 
 ## License
 
